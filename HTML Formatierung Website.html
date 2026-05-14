@@ -1,0 +1,661 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Psychologie Lernskript – HTML Converter</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #121a2f;
+      --panel-2: #17213a;
+      --text: #eef4ff;
+      --muted: #aebbd4;
+      --line: rgba(255,255,255,.12);
+      --accent: #65e4c3;
+      --accent-2: #86a8ff;
+      --warning: #ffd166;
+      --danger: #ff8fab;
+      --ok: #82f7a7;
+      --code: #07111f;
+      --shadow: 0 24px 80px rgba(0,0,0,.35);
+      --radius: 22px;
+      --radius-sm: 14px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 20% 5%, rgba(101, 228, 195, .18), transparent 28%),
+        radial-gradient(circle at 80% 12%, rgba(134, 168, 255, .16), transparent 28%),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .app-shell {
+      width: min(1380px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 36px 0 72px;
+    }
+
+    .hero {
+      padding: 34px;
+      border: 1px solid var(--line);
+      background: linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 22px;
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      font-size: .78rem;
+      font-weight: 800;
+      margin: 0 0 10px;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 4vw, 4rem);
+      letter-spacing: -.05em;
+      line-height: 1.02;
+      margin: 0 0 14px;
+    }
+
+    .hero p { color: var(--muted); max-width: 880px; margin: 0; }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin: 22px 0;
+    }
+
+    .panel {
+      background: rgba(18, 26, 47, .86);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .panel-header {
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .panel-header h2 { margin: 0; font-size: 1rem; letter-spacing: -.01em; }
+    .panel-header small { color: var(--muted); }
+
+    textarea {
+      width: 100%;
+      min-height: 520px;
+      resize: vertical;
+      border: 0;
+      background: #07111f;
+      color: #dce8ff;
+      padding: 18px;
+      font: 14px/1.55 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      outline: none;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 16px 18px;
+      border-top: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+    }
+
+    button {
+      appearance: none;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.08);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 10px 15px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    button.primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #07111f;
+      border-color: transparent;
+    }
+
+    .preview-panel { margin-top: 22px; }
+    .preview-wrap { padding: 26px; background: #f7f9fc; color: #102033; }
+
+    /* === OUTPUT CLASSES FOR CLAUDE / WEBSITE === */
+    .learning-script {
+      --ls-bg: #f7f9fc;
+      --ls-card: #ffffff;
+      --ls-text: #18233a;
+      --ls-muted: #647189;
+      --ls-line: #e3e9f3;
+      --ls-accent: #0ea5a4;
+      --ls-accent-2: #4057c9;
+      --ls-warning: #ffb020;
+      --ls-radius: 20px;
+      color: var(--ls-text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      max-width: 980px;
+      margin: 0 auto;
+      line-height: 1.74;
+    }
+
+    .learning-script .script-hero {
+      padding: clamp(26px, 5vw, 52px);
+      border-radius: 28px;
+      background: linear-gradient(135deg, #10213c, #244265 58%, #0ea5a4);
+      color: white;
+      margin: 0 0 32px;
+      box-shadow: 0 18px 60px rgba(16, 33, 60, .22);
+    }
+
+    .learning-script .script-label {
+      font-size: .78rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      font-weight: 900;
+      opacity: .82;
+      margin: 0 0 8px;
+    }
+
+    .learning-script .script-title {
+      font-size: clamp(2rem, 5vw, 4rem);
+      letter-spacing: -.055em;
+      line-height: 1.03;
+      margin: 0 0 12px;
+    }
+
+    .learning-script .script-subtitle { color: rgba(255,255,255,.82); margin: 0; font-size: 1.08rem; }
+
+    .learning-script .part-section {
+      margin: 42px 0 24px;
+      padding: 24px 26px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(14,165,164,.1), rgba(64,87,201,.08));
+      border: 1px solid var(--ls-line);
+    }
+
+    .learning-script .part-title {
+      margin: 0;
+      font-size: clamp(1.55rem, 3vw, 2.45rem);
+      line-height: 1.14;
+      letter-spacing: -.035em;
+    }
+
+    .learning-script .chapter-section {
+      margin: 34px 0 22px;
+      padding: 30px;
+      border-radius: 24px;
+      background: var(--ls-card);
+      border: 1px solid var(--ls-line);
+      box-shadow: 0 14px 38px rgba(23, 36, 64, .06);
+    }
+
+    .learning-script .chapter-title {
+      font-size: clamp(1.35rem, 2.4vw, 2rem);
+      line-height: 1.22;
+      letter-spacing: -.03em;
+      margin: 0 0 18px;
+      color: #11203a;
+    }
+
+    .learning-script .section-title {
+      font-size: 1.22rem;
+      line-height: 1.32;
+      margin: 28px 0 12px;
+      color: #18233a;
+      letter-spacing: -.015em;
+    }
+
+    .learning-script .subsection-title {
+      font-size: 1.05rem;
+      margin: 22px 0 10px;
+      color: #273451;
+    }
+
+    .learning-script .content-paragraph { margin: 0 0 14px; color: #26324a; }
+    .learning-script strong { color: #0f2038; font-weight: 850; }
+    .learning-script em { color: #3e4c68; }
+
+    .learning-script .content-list,
+    .learning-script .numbered-list {
+      margin: 10px 0 18px;
+      padding-left: 1.25rem;
+    }
+
+    .learning-script li { margin: 7px 0; }
+
+    .learning-script .data-table-wrap {
+      overflow-x: auto;
+      margin: 18px 0 24px;
+      border-radius: 18px;
+      border: 1px solid var(--ls-line);
+      background: #fff;
+    }
+
+    .learning-script .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 680px;
+      font-size: .94rem;
+    }
+
+    .learning-script .data-table th {
+      background: #edf4fb;
+      color: #13233e;
+      text-align: left;
+      padding: 13px 14px;
+      border-bottom: 1px solid var(--ls-line);
+      vertical-align: top;
+    }
+
+    .learning-script .data-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--ls-line);
+      vertical-align: top;
+    }
+
+    .learning-script .data-table tr:last-child td { border-bottom: 0; }
+
+    .learning-script .code-block {
+      background: #0d1828;
+      color: #d7e9ff;
+      padding: 18px;
+      border-radius: 18px;
+      overflow-x: auto;
+      font-size: .91rem;
+      margin: 18px 0 24px;
+    }
+
+    .learning-script .definition-card,
+    .learning-script .exam-card,
+    .learning-script .summary-card,
+    .learning-script .key-card,
+    .learning-script .warning-card,
+    .learning-script .question-card,
+    .learning-script .glossary-card {
+      margin: 18px 0;
+      padding: 18px 20px;
+      border-radius: 18px;
+      border: 1px solid var(--ls-line);
+      background: #fff;
+      box-shadow: 0 10px 28px rgba(23, 36, 64, .05);
+    }
+
+    .learning-script .definition-card { border-left: 5px solid var(--ls-accent); background: #f3fbfa; }
+    .learning-script .exam-card { border-left: 5px solid var(--ls-warning); background: #fffaf0; }
+    .learning-script .summary-card { border-left: 5px solid var(--ls-accent-2); background: #f5f7ff; }
+    .learning-script .key-card { border-left: 5px solid #20c997; background: #f2fff8; }
+    .learning-script .warning-card { border-left: 5px solid #ff5c7a; background: #fff5f7; }
+
+    .learning-script .question-card {
+      border-left: 5px solid #6d7df2;
+      background: #f7f8ff;
+    }
+
+    .learning-script .question-label {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #e7ebff;
+      color: #293ec8;
+      font-weight: 900;
+      font-size: .78rem;
+      margin-bottom: 10px;
+    }
+
+    .learning-script .answer-label {
+      color: #0f766e;
+      font-weight: 900;
+    }
+
+    .learning-script .glossary-card {
+      background: #ffffff;
+      display: grid;
+      gap: 4px;
+    }
+
+    .learning-script .glossary-term {
+      font-weight: 900;
+      color: #10203a;
+    }
+
+    .learning-script .glossary-text { color: #34415b; }
+
+    .learning-script .divider {
+      height: 1px;
+      background: var(--ls-line);
+      border: 0;
+      margin: 32px 0;
+    }
+
+    @media (max-width: 900px) {
+      .controls { grid-template-columns: 1fr; }
+      .learning-script .chapter-section { padding: 22px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app-shell">
+    <section class="hero">
+      <p class="eyebrow">HTML Content Formatter</p>
+      <h1>Psychologie-Lernskript sauber in HTML umwandeln</h1>
+      <p>Füge links die komplette Zusammenfassung ein. Der Converter erzeugt rechts einen HTML-Block mit Klassen, den du in Claudes Website-Placeholder einfügen kannst.</p>
+    </section>
+
+    <section class="controls">
+      <div class="panel">
+        <div class="panel-header">
+          <h2>1. Markdown / Rohtext einfügen</h2>
+          <small>Deine komplette Zusammenfassung</small>
+        </div>
+        <textarea id="input" spellcheck="false" placeholder="Hier die komplette Zusammenfassung einfügen..."></textarea>
+        <div class="actions">
+          <button class="primary" id="convertBtn">HTML erzeugen</button>
+          <button id="clearBtn">Leeren</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <h2>2. HTML-Output</h2>
+          <small>Direkt in Claude einfügbar</small>
+        </div>
+        <textarea id="output" spellcheck="false" placeholder="Hier erscheint der HTML-Code..."></textarea>
+        <div class="actions">
+          <button class="primary" id="copyBtn">HTML kopieren</button>
+          <button id="downloadBtn">Als .html herunterladen</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel preview-panel">
+      <div class="panel-header">
+        <h2>Live-Vorschau</h2>
+        <small>So sieht der Content mit den Klassen aus</small>
+      </div>
+      <div class="preview-wrap">
+        <div id="preview" class="learning-script"></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const escapeHtml = (str) => String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+
+    const slugify = (str) => String(str)
+      .toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9äöüß]+/gi, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 80) || 'section';
+
+    function inlineMarkdown(text) {
+      let t = escapeHtml(text);
+      t = t.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+      t = t.replace(/\*(.+?)\*/g, '<em>$1</em>');
+      t = t.replace(/`([^`]+)`/g, '<code>$1</code>');
+      return t;
+    }
+
+    function isTableSeparator(line) {
+      return /^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?\s*$/.test(line);
+    }
+
+    function parseTable(lines, startIndex) {
+      const rows = [];
+      let i = startIndex;
+      while (i < lines.length && /^\s*\|/.test(lines[i])) {
+        if (!isTableSeparator(lines[i])) rows.push(lines[i]);
+        i++;
+      }
+      if (rows.length < 1) return { html: '', next: i };
+      const splitRow = row => row.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map(c => c.trim());
+      const header = splitRow(rows[0]);
+      const body = rows.slice(1).map(splitRow);
+      let html = '<div class="data-table-wrap"><table class="data-table"><thead><tr>';
+      html += header.map(c => `<th>${inlineMarkdown(c)}</th>`).join('');
+      html += '</tr></thead><tbody>';
+      html += body.map(row => '<tr>' + row.map(c => `<td>${inlineMarkdown(c)}</td>`).join('') + '</tr>').join('');
+      html += '</tbody></table></div>';
+      return { html, next: i };
+    }
+
+    function paragraphClass(text, context) {
+      const clean = text.trim();
+      if (/^\*?Musterantwort:?\*?/i.test(clean)) return 'answer-paragraph';
+      if (/^\*?Merkhilfe:?\*?/i.test(clean)) return 'key-paragraph';
+      if (/^\*?Verwechslungsgefahr:?\*?/i.test(clean)) return 'warning-paragraph';
+      if (context === 'question') return 'question-text';
+      return 'content-paragraph';
+    }
+
+    function convertMarkdownToHtml(raw) {
+      const cleaned = raw
+        .replace(/\r\n/g, '\n')
+        .split('\n')
+        .filter(line => !/^\s*\*?Bitte mit [„"]?weiter/i.test(line.trim()))
+        .join('\n');
+
+      const lines = cleaned.split('\n');
+      const out = [];
+      let i = 0;
+      let listStack = null;
+      let inCode = false;
+      let codeBuffer = [];
+      let currentQuestionOpen = false;
+      let openedAnySection = false;
+
+      function closeList() {
+        if (listStack) {
+          out.push(`</${listStack}>`);
+          listStack = null;
+        }
+      }
+
+      function closeQuestion() {
+        if (currentQuestionOpen) {
+          out.push('</div>');
+          currentQuestionOpen = false;
+        }
+      }
+
+      out.push('<article class="learning-script">');
+      out.push('<header class="script-hero">');
+      out.push('<p class="script-label">Lernskript</p>');
+      out.push('<h1 class="script-title">Psycho... logisch!</h1>');
+      out.push('<p class="script-subtitle">Einführung in die Grundlagen der Psychologie – Lernskript für die Aufnahmeprüfung Bachelor Psychologie 2026</p>');
+      out.push('</header>');
+
+      while (i < lines.length) {
+        let line = lines[i];
+        const trimmed = line.trim();
+
+        if (trimmed.startsWith('```')) {
+          closeList();
+          if (!inCode) {
+            inCode = true;
+            codeBuffer = [];
+          } else {
+            out.push(`<pre class="code-block"><code>${escapeHtml(codeBuffer.join('\n'))}</code></pre>`);
+            inCode = false;
+            codeBuffer = [];
+          }
+          i++;
+          continue;
+        }
+        if (inCode) {
+          codeBuffer.push(line);
+          i++;
+          continue;
+        }
+
+        if (!trimmed) {
+          closeList();
+          i++;
+          continue;
+        }
+
+        if (/^-{3,}$/.test(trimmed)) {
+          closeList();
+          closeQuestion();
+          out.push('<hr class="divider" />');
+          i++;
+          continue;
+        }
+
+        if (i + 1 < lines.length && /^\s*\|/.test(trimmed) && isTableSeparator(lines[i + 1])) {
+          closeList();
+          const parsed = parseTable(lines, i);
+          out.push(parsed.html);
+          i = parsed.next;
+          continue;
+        }
+
+        const h = trimmed.match(/^(#{1,6})\s+(.+)$/);
+        if (h) {
+          closeList();
+          closeQuestion();
+          const level = h[1].length;
+          const text = h[2].replace(/^\*\*|\*\*$/g, '').trim();
+          const id = slugify(text);
+          if (level === 1 && /^TEIL\s+\d+/i.test(text)) {
+            out.push(`<section class="part-section" id="${id}"><h2 class="part-title">${inlineMarkdown(text)}</h2></section>`);
+            openedAnySection = true;
+          } else if (level === 1) {
+            out.push(`<section class="part-section" id="${id}"><h2 class="part-title">${inlineMarkdown(text)}</h2></section>`);
+            openedAnySection = true;
+          } else if (level === 2) {
+            out.push(`<section class="chapter-section" id="${id}"><h2 class="chapter-title">${inlineMarkdown(text)}</h2>`);
+          } else if (level === 3) {
+            out.push(`<h3 class="section-title" id="${id}">${inlineMarkdown(text)}</h3>`);
+          } else {
+            out.push(`<h4 class="subsection-title" id="${id}">${inlineMarkdown(text)}</h4>`);
+          }
+          i++;
+          continue;
+        }
+
+        const question = trimmed.match(/^\*\*Frage\s+(\d+)\*\*$/i);
+        if (question) {
+          closeList();
+          closeQuestion();
+          out.push('<div class="question-card">');
+          out.push(`<div class="question-label">Frage ${question[1]}</div>`);
+          currentQuestionOpen = true;
+          i++;
+          continue;
+        }
+
+        const unordered = trimmed.match(/^[-*]\s+(.+)$/);
+        const ordered = trimmed.match(/^\d+\.\s+(.+)$/);
+        if (unordered || ordered) {
+          const tag = unordered ? 'ul' : 'ol';
+          const cls = unordered ? 'content-list' : 'numbered-list';
+          if (listStack && listStack !== tag) closeList();
+          if (!listStack) {
+            out.push(`<${tag} class="${cls}">`);
+            listStack = tag;
+          }
+          out.push(`<li>${inlineMarkdown((unordered || ordered)[1])}</li>`);
+          i++;
+          continue;
+        }
+
+        closeList();
+
+        const glossary = trimmed.match(/^\*\*(.+?)\*\*\s+[–-]\s+(.+)$/);
+        if (glossary && !/^Frage\s+\d+/i.test(glossary[1])) {
+          out.push('<div class="glossary-card">');
+          out.push(`<div class="glossary-term">${inlineMarkdown(glossary[1])}</div>`);
+          out.push(`<div class="glossary-text">${inlineMarkdown(glossary[2])}</div>`);
+          out.push('</div>');
+          i++;
+          continue;
+        }
+
+        if (/^\*?Musterantwort:?\*?/i.test(trimmed)) {
+          out.push(`<p class="content-paragraph"><span class="answer-label">Musterantwort:</span> ${inlineMarkdown(trimmed.replace(/^\*?Musterantwort:?\*?\s*/i, ''))}</p>`);
+          i++;
+          continue;
+        }
+
+        if (/^\*?Merkhilfe:?\*?/i.test(trimmed)) {
+          out.push(`<div class="key-card"><p class="content-paragraph">${inlineMarkdown(trimmed)}</p></div>`);
+          i++;
+          continue;
+        }
+
+        if (/^\*?Verwechslungsgefahr:?\*?/i.test(trimmed)) {
+          out.push(`<div class="warning-card"><p class="content-paragraph">${inlineMarkdown(trimmed)}</p></div>`);
+          i++;
+          continue;
+        }
+
+        out.push(`<p class="${paragraphClass(trimmed)}">${inlineMarkdown(trimmed)}</p>`);
+        i++;
+      }
+
+      closeList();
+      closeQuestion();
+      out.push('</article>');
+
+      let html = out.join('\n');
+
+      // Post-processing: close open chapter sections before new chapter sections is intentionally not performed,
+      // because this snippet is often inserted into existing page sections. Browser autoclosing remains safe.
+      return html;
+    }
+
+    const input = document.getElementById('input');
+    const output = document.getElementById('output');
+    const preview = document.getElementById('preview');
+
+    document.getElementById('convertBtn').addEventListener('click', () => {
+      const html = convertMarkdownToHtml(input.value);
+      output.value = html;
+      preview.outerHTML = `<div id="preview" class="preview-render">${html}</div>`;
+    });
+
+    document.getElementById('copyBtn').addEventListener('click', async () => {
+      await navigator.clipboard.writeText(output.value);
+    });
+
+    document.getElementById('clearBtn').addEventListener('click', () => {
+      input.value = '';
+      output.value = '';
+      document.querySelector('.preview-wrap').innerHTML = '<div id="preview" class="learning-script"></div>';
+    });
+
+    document.getElementById('downloadBtn').addEventListener('click', () => {
+      const blob = new Blob([output.value], { type: 'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'psychologie-lernskript-content.html';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  </script>
+</body>
+</html>
