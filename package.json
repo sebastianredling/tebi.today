@@ -1,0 +1,24 @@
+{
+  "name": "tebi-today",
+  "version": "1.0.0",
+  "description": "Learn AI - Understanding artificial intelligence",
+  "type": "module",
+  "scripts": {
+    "dev": "npx http-server -p 3000",
+    "build": "node build.js",
+    "prebuild": "mkdir -p dist"
+  },
+  "keywords": [
+    "ai",
+    "learning",
+    "education"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@vercel/speed-insights": "^2.0.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.0"
+  }
+}
