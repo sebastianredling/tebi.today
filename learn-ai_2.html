@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Learn AI</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#fff;--bg2:#f7f6f2;--bg3:#efede7;
+  --text:#1a1a1a;--text2:#666;--text3:#aaa;
+  --border:rgba(0,0,0,0.1);--border2:rgba(0,0,0,0.22);
+  --purple:#7F77DD;--purple-d:#534AB7;--purple-l:#EEEDFE;--purple-t:#3C3489;
+  --green-bg:#EAF3DE;--green-t:#27500A;--green-b:#3B6D11;
+  --red-bg:#FCEBEB;--red-t:#501313;--red-b:#A32D2D;
+  --r:12px;--rs:8px
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#1c1c1a;--bg2:#272725;--bg3:#2f2f2c;
+  --text:#f0ede6;--text2:#999;--text3:#555;
+  --border:rgba(255,255,255,0.1);--border2:rgba(255,255,255,0.2);
+  --purple-l:#2a2858;--purple-t:#b0abf0;
+  --green-bg:#162b08;--green-t:#8fcf50;--green-b:#3B6D11;
+  --red-bg:#2b0e0e;--red-t:#f09595;--red-b:#A32D2D;
+}}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg3);color:var(--text);min-height:100vh}
+.page{max-width:740px;margin:0 auto;padding:2rem 1rem 4rem}
+h1{font-size:26px;font-weight:700;margin-bottom:4px}
+.sub{font-size:14px;color:var(--text2);margin-bottom:1.5rem}
+.tabs{display:flex;gap:8px;margin-bottom:1.5rem;flex-wrap:wrap}
+.tab{padding:7px 16px;border-radius:20px;font-size:13px;cursor:pointer;border:0.5px solid var(--border);background:transparent;color:var(--text2);transition:all .15s;font-family:inherit}
+.tab.active{background:var(--text);color:var(--bg);border-color:transparent}
+.tab:hover:not(.active){background:var(--bg2);color:var(--text)}
+.sec{display:none}.sec.active{display:block}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:1.25rem}
+.card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--r);padding:1rem 1.25rem;cursor:pointer;transition:all .15s}
+.card:hover{border-color:var(--border2);background:var(--bg2);transform:translateY(-1px)}
+.card.sel{border:2px solid var(--purple)}
+.card-icon{font-size:22px;margin-bottom:8px}
+.card-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px}
+.card-desc{font-size:12px;color:var(--text2);line-height:1.5}
+.expl{display:none;background:var(--bg);border:0.5px solid var(--border);border-radius:var(--r);padding:1.5rem;margin-top:4px}
+.expl.show{display:block}
+.expl-title{font-size:17px;font-weight:600;margin-bottom:12px;color:var(--text)}
+.expl-body{font-size:14px;line-height:1.8;color:var(--text2)}
+.expl-body p{margin-bottom:10px}
+.expl-body p:last-child{margin-bottom:0}
+.expl-body strong{color:var(--text);font-weight:600}
+.tag{display:inline-block;background:var(--purple-l);color:var(--purple-t);font-size:11px;font-weight:600;padding:3px 8px;border-radius:6px;margin-right:4px;margin-bottom:4px}
+.quiz-box{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--r);padding:1.5rem}
+.quiz-meta{font-size:13px;color:var(--text2);margin-bottom:8px}
+.score-bar{background:var(--bg2);border-radius:20px;height:6px;margin-bottom:1.5rem;overflow:hidden}
+.score-fill{height:100%;background:var(--purple);border-radius:20px;transition:width .4s}
+.quiz-q{font-size:16px;font-weight:600;color:var(--text);margin-bottom:1rem;line-height:1.5}
+.quiz-opts{display:flex;flex-direction:column;gap:8px}
+.quiz-opt{padding:11px 14px;border:0.5px solid var(--border);border-radius:var(--rs);cursor:pointer;font-size:14px;color:var(--text);background:var(--bg2);text-align:left;font-family:inherit;transition:all .15s}
+.quiz-opt:hover:not(:disabled){border-color:var(--purple)}
+.quiz-opt.correct{background:var(--green-bg);border-color:var(--green-b);color:var(--green-t)}
+.quiz-opt.wrong{background:var(--red-bg);border-color:var(--red-b);color:var(--red-t)}
+.quiz-fb{margin-top:1rem;font-size:14px;line-height:1.6;padding:10px 14px;border-radius:var(--rs);display:none}
+.quiz-fb.ok{background:var(--green-bg);color:var(--green-t)}
+.quiz-fb.no{background:var(--red-bg);color:var(--red-t)}
+.quiz-nav{display:flex;justify-content:space-between;align-items:center;margin-top:1rem}
+.quiz-prog{font-size:13px;color:var(--text2)}
+.next-btn{background:var(--purple);color:#fff;border:none;border-radius:var(--rs);padding:8px 18px;cursor:pointer;font-size:13px;font-family:inherit;display:none;transition:background .15s}
+.next-btn:hover{background:var(--purple-d)}
+.restart-btn{background:transparent;border:0.5px solid var(--border);border-radius:var(--rs);padding:8px 18px;cursor:pointer;font-size:13px;font-family:inherit;color:var(--text);display:none}
+.restart-btn:hover{background:var(--bg2)}
+.dots{display:flex;gap:5px;flex-wrap:wrap}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--border2);transition:background .3s;flex-shrink:0}
+.dot.done{background:var(--purple);opacity:0.5}
+.dot.current{background:var(--purple)}
+.glist{display:flex;flex-direction:column;gap:8px}
+.gi{border:0.5px solid var(--border);border-radius:var(--rs);overflow:hidden;background:var(--bg)}
+.gt{padding:12px 14px;font-size:14px;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:var(--text);transition:background .15s;user-select:none}
+.gt:hover{background:var(--bg2)}
+.arrow{font-size:11px;color:var(--text3);transition:transform .2s;display:inline-block}
+.gd{display:none;padding:10px 14px;font-size:13px;line-height:1.7;color:var(--text2);border-top:0.5px solid var(--border);background:var(--bg2)}
+.gi.open .gd{display:block}
+.gi.open .arrow{transform:rotate(180deg)}
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>🧠 Learn AI</h1>
+  <p class="sub">Verstehe künstliche Intelligenz – von Grundlagen bis zu modernen Modellen</p>
+  <div class="tabs">
+    <button class="tab active" onclick="sw('learn',this)">📚 Themen</button>
+    <button class="tab" onclick="sw('quiz',this)">❓ Quiz</button>
+    <button class="tab" onclick="sw('glossary',this)">📖 Glossar</button>
+  </div>
+
+  <div id="sec-learn" class="sec active">
+    <div class="grid">
+      <div class="card" onclick="show(0,this)"><div class="card-icon">🤖</div><div class="card-title">Was ist KI?</div><div class="card-desc">Grundlagen & Definition</div></div>
+      <div class="card" onclick="show(1,this)"><div class="card-icon">📊</div><div class="card-title">Machine Learning</div><div class="card-desc">Wie Maschinen lernen</div></div>
+      <div class="card" onclick="show(2,this)"><div class="card-icon">🕸️</div><div class="card-title">Neuronale Netze</div><div class="card-desc">Vom Gehirn zum Algorithmus</div></div>
+      <div class="card" onclick="show(3,this)"><div class="card-icon">💬</div><div class="card-title">LLMs</div><div class="card-desc">Sprachmodelle verstehen</div></div>
+      <div class="card" onclick="show(4,this)"><div class="card-icon">👁️</div><div class="card-title">Computer Vision</div><div class="card-desc">Wenn KI sehen kann</div></div>
+      <div class="card" onclick="show(5,this)"><div class="card-icon">⚖️</div><div class="card-title">KI-Ethik</div><div class="card-desc">Chancen & Risiken</div></div>
+    </div>
+    <div class="expl" id="expl"></div>
+  </div>
+
+  <div id="sec-quiz" class="sec">
+    <div class="quiz-box">
+      <div class="quiz-meta">Frage <span id="qnum">1</span> von <span id="qtotal">10</span> &nbsp;·&nbsp; <span id="qscore">0</span> richtig</div>
+      <div class="score-bar"><div class="score-fill" id="sfill" style="width:0%"></div></div>
+      <div class="quiz-q" id="qq"></div>
+      <div class="quiz-opts" id="qopts"></div>
+      <div class="quiz-fb" id="qfb"></div>
+      <div class="quiz-nav">
+        <div class="dots" id="dots"></div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span class="quiz-prog" id="quiz-prog" style="font-size:13px;color:var(--text2);"></span>
+          <button class="restart-btn" id="restart-btn" onclick="restartQuiz()">↺ Nochmal</button>
+          <button class="next-btn" id="next-btn" onclick="nextQ()">Weiter →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="sec-glossary" class="sec">
+    <div class="glist" id="glist"></div>
+  </div>
+</div>
+<script>
+const TOPICS=[
+  {icon:'🤖',title:'Was ist Künstliche Intelligenz?',tags:['Grundlagen','Definition','Geschichte'],body:'<p><strong>Künstliche Intelligenz (KI)</strong> bezeichnet Computersysteme, die Aufgaben ausführen können, die normalerweise menschliche Intelligenz erfordern — wie Sprache verstehen, Muster erkennen oder Probleme lösen.</p><p>Der Begriff wurde 1956 von John McCarthy geprägt. Heute unterscheiden wir <strong>schwache KI</strong> (spezialisiert auf eine Aufgabe, z.B. Schach oder Gesichtserkennung) und <strong>starke KI</strong> (allgemeine menschliche Intelligenz — noch nicht erreicht).</p><p>Moderne KI findest du überall: Sprachassistenten, Netflix-Empfehlungen, Navigation, medizinische Diagnose und Chatbots wie Claude oder ChatGPT.</p>'},
+  {icon:'📊',title:'Machine Learning',tags:['ML','Training','Daten'],body:'<p><strong>Machine Learning (ML)</strong> ist ein Teilbereich der KI, bei dem Algorithmen aus Daten lernen — ohne explizit programmiert zu werden. Statt Regeln vorzugeben, erkennt das Modell selbst Muster.</p><p>Beispiel: Ein Spam-Filter lernt, indem er tausende E-Mails analysiert und erkennt, welche Muster auf Spam hinweisen. Nach dem Training klassifiziert er neue E-Mails selbstständig.</p><p>Es gibt drei Haupttypen: <strong>Supervised Learning</strong> (mit beschrifteten Daten), <strong>Unsupervised Learning</strong> (Muster ohne Labels finden) und <strong>Reinforcement Learning</strong> (durch Belohnung und Strafe lernen).</p>'},
+  {icon:'🕸️',title:'Neuronale Netze',tags:['Deep Learning','Neuronen','Schichten'],body:'<p><strong>Neuronale Netze</strong> sind vom menschlichen Gehirn inspiriert. Sie bestehen aus Tausenden verbundener Neuronen in Schichten: Eingabeschicht → versteckte Schichten → Ausgabeschicht.</p><p>Beim Training werden die Verbindungsgewichte so angepasst, dass Fehler minimiert werden — ähnlich wie ein Musiker übt, bis ein Stück sitzt.</p><p>Tiefe Netze mit vielen Schichten nennt man <strong>Deep Learning</strong>. Sie sind heute der Kern moderner KI und können Bilder, Sprache und komplexe Muster besser verarbeiten als ältere Methoden.</p>'},
+  {icon:'💬',title:'Large Language Models (LLMs)',tags:['GPT','Claude','Transformer'],body:'<p><strong>Large Language Models (LLMs)</strong> sind riesige KI-Modelle, trainiert auf enormen Textmengen — oft hunderte Milliarden Wörter aus Büchern, Websites und Artikeln.</p><p>Das Grundprinzip: Das Modell lernt, das nächste Wort vorherzusagen. Aus dieser einfachen Aufgabe entsteht ein tiefes Sprachverständnis. Bekannte LLMs: <strong>Claude</strong> (Anthropic), <strong>GPT-4</strong> (OpenAI), <strong>Gemini</strong> (Google).</p><p>Die Architektur dahinter heißt <strong>Transformer</strong> (2017, Google). LLMs können übersetzen, zusammenfassen, Code schreiben und Fragen beantworten.</p>'},
+  {icon:'👁️',title:'Computer Vision',tags:['Bilder','CNN','Objekterkennung'],body:'<p><strong>Computer Vision</strong> gibt Maschinen die Fähigkeit, visuelle Informationen zu verstehen — Bilder, Videos, Gesichter, Objekte und Szenen.</p><p>Für einen Computer ist ein Bild nur eine Matrix aus Zahlen (Pixelwerte). <strong>Convolutional Neural Networks (CNNs)</strong> lernen, daraus Kanten, Formen und schließlich Objekte zu erkennen.</p><p>Anwendungen: Gesichtserkennung, medizinische Diagnose (Tumorerkennung), autonomes Fahren, Qualitätskontrolle und Augmented Reality. Bei spezifischen Aufgaben ist Computer Vision oft genauer als das menschliche Auge.</p>'},
+  {icon:'⚖️',title:'KI-Ethik',tags:['Bias','Datenschutz','Sicherheit'],body:'<p><strong>KI-Ethik</strong> befasst sich mit den gesellschaftlichen und moralischen Fragen rund um KI — denn mit großer Macht kommt große Verantwortung.</p><p>Zentrale Probleme: <strong>Bias</strong> (Modelle übernehmen Vorurteile aus Trainingsdaten), <strong>Datenschutz</strong>, <strong>Transparenz</strong> (Black-Box-Entscheidungen) und Jobverlust durch Automatisierung.</p><p>Die EU-KI-Verordnung (2024) ist das erste große Gesetz zur KI-Regulierung. Organisationen wie Anthropic arbeiten intensiv an <strong>KI-Sicherheit</strong> — damit KI hilfreich, harmlos und ehrlich bleibt.</p>'},
+];
+
+const QUIZ=[
+  {q:"Was bedeutet 'ML'?",opts:["Machine Language","Machine Learning","Meta Logic","Model Layer"],ans:1,exp:"ML = Machine Learning. Algorithmen lernen aus Daten, ohne explizit programmiert zu werden."},
+  {q:"Welche Methode ahmt das Gehirn nach?",opts:["Entscheidungsbäume","Lineare Regression","Neuronale Netze","Regelbasierte Systeme"],ans:2,exp:"Neuronale Netze bestehen aus Schichten verbundener Knoten – inspiriert vom menschlichen Gehirn."},
+  {q:"Was ist ein Training Dataset?",opts:["Ein fertiges KI-Modell","Daten zum Trainieren der KI","Ein Computerprogramm","Ein Testverfahren"],ans:1,exp:"Ein Training Dataset sind Daten, mit denen ein ML-Modell Muster und Zusammenhänge lernt."},
+  {q:"Was macht ein LLM?",opts:["Bilder erkennen","Sprache verstehen und generieren","Mathe lösen","Roboter steuern"],ans:1,exp:"LLMs wie Claude oder GPT-4 sind auf natürliche Sprache spezialisiert."},
+  {q:"Was ist Overfitting?",opts:["Modell ist zu langsam","Modell lernt Trainingsdaten auswendig","Zu wenig Daten","Modell ist zu groß"],ans:1,exp:"Overfitting: das Modell lernt die Trainingsdaten auswendig und versagt bei neuen Daten."},
+  {q:"Was ist Reinforcement Learning?",opts:["Lernen aus Beispielen","Lernen durch Belohnung & Bestrafung","Lernen ohne Daten","Lernen durch Regeln"],ans:1,exp:"Der Agent lernt durch Belohnungen (gute Entscheidung) und Strafen (schlechte Entscheidung)."},
+  {q:"Was ist ein Transformer?",opts:["Ein Roboter","Eine Netzwerkarchitektur","Ein Lernalgorithmus","Eine Datenbank"],ans:1,exp:"Der Transformer (2017, Google) ist die Architektur hinter modernen LLMs wie Claude und GPT."},
+  {q:"Was ist Bias in KI?",opts:["Ein Programmierfehler","Vorurteile aus Trainingsdaten","Zu langsame Verarbeitung","Zu viele Parameter"],ans:1,exp:"Bias entsteht, wenn KI-Modelle Vorurteile aus den Trainingsdaten übernehmen."},
+  {q:"Was bedeutet CNN?",opts:["Central Neural Network","Convolutional Neural Network","Computed Network Node","Complex Neuron Net"],ans:1,exp:"CNN = Convolutional Neural Network. Speziell für Bildverarbeitung entwickelt."},
+  {q:"Schwache KI vs. starke KI?",opts:["Schwache KI ist langsamer","Schwache KI ist spezialisiert; starke KI hat allgemeine Intelligenz","Starke KI nutzt mehr Daten","Schwache KI braucht mehr Energie"],ans:1,exp:"Schwache KI: spezialisiert (z.B. Schach). Starke KI: allgemeine menschliche Intelligenz – noch nicht erreicht."},
+];
+
+const GLOSSARY=[
+  {t:"Künstliche Intelligenz (KI)",d:"Die Simulation menschlicher Intelligenz durch Maschinen — Lernen, Problemlösen, Sprachverstehen, Mustererkennung."},
+  {t:"Machine Learning (ML)",d:"Algorithmen, die aus Daten lernen, ohne explizit programmiert zu werden. Das Modell erkennt Muster selbstständig."},
+  {t:"Deep Learning",d:"ML mit tiefen neuronalen Netzen (viele Schichten) — besonders stark bei Bildern, Sprache und Audio."},
+  {t:"Neuronales Netz",d:"Algorithmus inspiriert vom menschlichen Gehirn, bestehend aus Schichten verbundener Neuronen."},
+  {t:"Large Language Model (LLM)",d:"Sehr großes KI-Modell trainiert auf riesigen Textmengen. Beispiele: Claude, GPT-4, Gemini."},
+  {t:"Training",d:"Der Prozess, bei dem ein KI-Modell aus Daten lernt und seine Parameter optimiert."},
+  {t:"Parameter",d:"Interne Gewichtungen eines neuronalen Netzes. LLMs haben oft Milliarden davon."},
+  {t:"Prompt",d:"Deine Eingabe an ein KI-Modell. Ein präziser Prompt führt zu besseren Antworten."},
+  {t:"Halluzination",d:"Wenn ein KI-Modell selbstbewusst falsche Informationen erfindet — bekanntes Problem bei LLMs."},
+  {t:"Reinforcement Learning",d:"Lernmethode durch Belohnungen und Strafen — ähnlich wie man einen Hund trainiert."},
+  {t:"Computer Vision",d:"KI-Fähigkeit, Bilder und Videos zu verstehen — Objekte erkennen, Szenen beschreiben."},
+  {t:"NLP",d:"Natural Language Processing — KI-Teilbereich für das Verstehen und Erzeugen menschlicher Sprache."},
+  {t:"Bias",d:"Vorurteile in KI-Modellen, die aus verzerrten Trainingsdaten stammen."},
+  {t:"Transformer",d:"Netzwerkarchitektur (2017, Google), Basis moderner LLMs. Nutzt den Attention-Mechanismus."},
+  {t:"Overfitting",d:"Das Modell lernt Trainingsdaten auswendig und funktioniert bei neuen Daten schlecht."},
+  {t:"CNN",d:"Convolutional Neural Network — neuronales Netz speziell für Bildverarbeitung."},
+  {t:"Supervised Learning",d:"Lernmethode mit beschrifteten Daten — das Modell kennt die richtigen Antworten beim Training."},
+  {t:"AGI",d:"Artificial General Intelligence — KI mit menschenähnlicher Allgemeinintelligenz. Noch nicht erreicht."},
+];
+
+let qIdx=0,qScore=0,qAnswered=false;
+
+function sw(name,btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('sec-'+name).classList.add('active');
+  if(name==='glossary')renderGlossary();
+}
+
+function show(i,el){
+  document.querySelectorAll('.card').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+  const t=TOPICS[i];
+  const box=document.getElementById('expl');
+  box.innerHTML='<div class="expl-title">'+t.icon+' '+t.title+'</div><div style="margin-bottom:12px">'+t.tags.map(x=>'<span class="tag">'+x+'</span>').join('')+'</div><div class="expl-body">'+t.body+'</div>';
+  box.classList.add('show');
+  box.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function loadQ(){
+  const q=QUIZ[qIdx];
+  document.getElementById('qtotal').textContent=QUIZ.length;
+  document.getElementById('qq').textContent=q.q;
+  document.getElementById('qnum').textContent=qIdx+1;
+  document.getElementById('qscore').textContent=qScore;
+  document.getElementById('sfill').style.width=(qScore/QUIZ.length*100)+'%';
+  document.getElementById('qopts').innerHTML=q.opts.map((o,i)=>'<button class="quiz-opt" onclick="answer('+i+')">'+o+'</button>').join('');
+  document.getElementById('qfb').style.display='none';
+  document.getElementById('next-btn').style.display='none';
+  document.getElementById('restart-btn').style.display='none';
+  document.getElementById('dots').innerHTML=QUIZ.map((_,i)=>'<div class="dot'+(i<qIdx?' done':i===qIdx?' current':'')+'"></div>').join('');
+  document.getElementById('quiz-prog').textContent='';
+  qAnswered=false;
+}
+
+function answer(i){
+  if(qAnswered)return; qAnswered=true;
+  const q=QUIZ[qIdx];
+  document.querySelectorAll('.quiz-opt').forEach(o=>o.disabled=true);
+  document.querySelectorAll('.quiz-opt')[q.ans].classList.add('correct');
+  if(i!==q.ans)document.querySelectorAll('.quiz-opt')[i].classList.add('wrong');
+  else qScore++;
+  const fb=document.getElementById('qfb');
+  fb.className='quiz-fb '+(i===q.ans?'ok':'no');
+  fb.textContent=(i===q.ans?'✓ Richtig! ':'✗ Leider falsch. ')+q.exp;
+  fb.style.display='block';
+  document.getElementById('qscore').textContent=qScore;
+  document.getElementById('sfill').style.width=(qScore/QUIZ.length*100)+'%';
+  if(qIdx<QUIZ.length-1){document.getElementById('next-btn').style.display='block';}
+  else{document.getElementById('quiz-prog').textContent='Fertig! '+qScore+' / '+QUIZ.length+' richtig 🎉';document.getElementById('restart-btn').style.display='block';}
+}
+
+function nextQ(){qIdx++;loadQ();}
+function restartQuiz(){qIdx=0;qScore=0;loadQ();document.getElementById('quiz-prog').textContent='';}
+
+function renderGlossary(){
+  const g=document.getElementById('glist');
+  if(g.innerHTML)return;
+  g.innerHTML=GLOSSARY.map((item,i)=>'<div class="gi" id="gi'+i+'"><div class="gt" onclick="tg('+i+')">'+item.t+'<span class="arrow">▾</span></div><div class="gd">'+item.d+'</div></div>').join('');
+}
+function tg(i){document.getElementById('gi'+i).classList.toggle('open');}
+
+loadQ();
+</script>
+</body>
+</html>
