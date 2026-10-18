@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Zusatzklasse anmelden · Kinderkonzert</title>
+  <style>
+    :root {
+      --bg: #fbf6ee;
+      --surface: #ffffff;
+      --ink: #1c1f3a;
+      --muted: #5d6078;
+      --line: #e8dfcf;
+      --field: #fffdf9;
+      --accent: #c8401a;
+      --accent-hover: #ad3512;
+      --accent-ink: #ffffff;
+      --accent-soft: #fde7dd;
+      --sun: #ffc94d;
+      --sun-ink: #3d2c00;
+      --mark: #ffd97a;
+      --taken: #ece5d8;
+      --taken-ink: #9a9282;
+      --ok: #17784d;
+      --ok-ink: #ffffff;
+      --ok-soft: #dcf3e7;
+      --shadow: 0 1px 2px rgba(28, 31, 58, 0.05), 0 14px 36px rgba(28, 31, 58, 0.08);
+      --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --display: ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      color-scheme: light;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #14162a;
+        --surface: #1d2038;
+        --ink: #f4efe6;
+        --muted: #a8aac3;
+        --line: #31355a;
+        --field: #171a31;
+        --accent: #ff8a63;
+        --accent-hover: #ffa182;
+        --accent-ink: #26100a;
+        --accent-soft: #3b2232;
+        --sun: #ffcf5c;
+        --sun-ink: #3d2c00;
+        --mark: rgba(255, 207, 92, 0.32);
+        --taken: #262a47;
+        --taken-ink: #6f7495;
+        --ok: #4cc38a;
+        --ok-ink: #0b2318;
+        --ok-soft: #173327;
+        --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 14px 36px rgba(0, 0, 0, 0.35);
+        color-scheme: dark;
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--ink);
+      font: 16px/1.55 var(--font);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 20px 16px 40px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 28px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--display);
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .brand svg {
+      color: var(--accent);
+    }
+
+    .layout {
+      display: grid;
+      gap: 28px;
+    }
+
+    .confirm {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 22px;
+      padding: 7px 14px 7px 8px;
+      border-radius: 999px;
+      background: var(--ok-soft);
+      color: var(--ink);
+      font-size: 0.92rem;
+      font-weight: 600;
+    }
+
+    .confirm svg {
+      flex: none;
+      padding: 3px;
+      border-radius: 50%;
+      background: var(--ok);
+      color: var(--ok-ink);
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--accent);
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0 0 16px;
+      font-family: var(--display);
+      font-size: clamp(2rem, 6vw, 3.1rem);
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      text-wrap: balance;
+    }
+
+    .mark {
+      background: linear-gradient(transparent 60%, var(--mark) 60%, var(--mark) 92%, transparent 92%);
+      padding: 0 0.06em;
+    }
+
+    .lead {
+      margin: 0 0 26px;
+      max-width: 34em;
+      color: var(--muted);
+      font-size: 1.06rem;
+      text-wrap: pretty;
+    }
+
+    .lead strong {
+      color: var(--ink);
+    }
+
+    .spots {
+      padding: 20px 20px 18px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .spots-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .spots-count {
+      margin: 0;
+      font-family: var(--display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .spots-count strong {
+      color: var(--accent);
+      font-size: 1.6em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .live {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      flex: none;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .live i {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--ok);
+      animation: puls 2s ease-in-out infinite;
+    }
+
+    .tickets {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      max-width: 440px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .ticket {
+      --notch: 8px;
+      position: relative;
+      aspect-ratio: 3 / 4;
+      border-radius: 12px;
+      background: var(--sun);
+      color: var(--sun-ink);
+      text-align: center;
+      -webkit-mask:
+        radial-gradient(circle var(--notch) at 0 64%, #0000 97%, #000) left / 51% 100% no-repeat,
+        radial-gradient(circle var(--notch) at 100% 64%, #0000 97%, #000) right / 51% 100% no-repeat;
+      mask:
+        radial-gradient(circle var(--notch) at 0 64%, #0000 97%, #000) left / 51% 100% no-repeat,
+        radial-gradient(circle var(--notch) at 100% 64%, #0000 97%, #000) right / 51% 100% no-repeat;
+      transition: background-color 0.5s, color 0.5s, transform 0.5s, opacity 0.5s;
+    }
+
+    .ticket::after {
+      content: "";
+      position: absolute;
+      top: 64%;
+      left: calc(var(--notch) + 4px);
+      right: calc(var(--notch) + 4px);
+      border-top: 2px dashed currentColor;
+      opacity: 0.28;
+    }
+
+    .ticket-top {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 64%;
+      padding-top: 4px;
+    }
+
+    .ticket-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      opacity: 0.75;
+    }
+
+    .ticket-nr {
+      font-family: var(--display);
+      font-size: clamp(1.6rem, 7vw, 2.3rem);
+      font-weight: 800;
+      line-height: 1.05;
+    }
+
+    .ticket-status {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 36%;
+      font-size: 0.8rem;
+      font-weight: 800;
+    }
+
+    .ticket.vergeben {
+      background: var(--taken);
+      color: var(--taken-ink);
+      transform: rotate(-3deg) translateY(3px);
+    }
+
+    .ticket.vergeben .ticket-nr {
+      text-decoration: line-through;
+      text-decoration-thickness: 3px;
+    }
+
+    .ticket.meiner {
+      background: var(--ok);
+      color: var(--ok-ink);
+    }
+
+    .ticket.naechster {
+      animation: wippen 2.6s ease-in-out infinite;
+    }
+
+    .ticket.laedt {
+      opacity: 0.45;
+    }
+
+    .spots-note {
+      min-height: 1.5em;
+      margin: 16px 0 0;
+      color: var(--muted);
+      font-size: 0.93rem;
+    }
+
+    .card {
+      padding: 24px 20px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .card h2 {
+      margin: 0 0 4px;
+      font-family: var(--display);
+      font-size: 1.45rem;
+      line-height: 1.2;
+    }
+
+    .card-sub {
+      margin: 0 0 22px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    fieldset {
+      min-width: 0;
+      margin: 0 0 22px;
+      padding: 0;
+      border: 0;
+    }
+
+    legend {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      padding: 0;
+      font-weight: 700;
+    }
+
+    .step {
+      display: inline-grid;
+      place-items: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--ink);
+      color: var(--bg);
+      font-size: 0.8rem;
+      font-weight: 800;
+    }
+
+    .fields {
+      display: grid;
+      gap: 14px;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .optional {
+      margin-left: 4px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid var(--line);
+      border-radius: 12px;
+      background: var(--field);
+      color: var(--ink);
+      font: inherit;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    input::placeholder {
+      color: var(--muted);
+      opacity: 0.6;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px var(--accent-soft);
+    }
+
+    .falle {
+      position: absolute;
+      left: -9999px;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+
+    .form-error {
+      margin: 0 0 16px;
+      padding: 12px 14px;
+      border-left: 4px solid var(--accent);
+      border-radius: 10px;
+      background: var(--accent-soft);
+      font-size: 0.95rem;
+    }
+
+    .submit {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 16px 20px;
+      border: 0;
+      border-radius: 14px;
+      background: var(--accent);
+      color: var(--accent-ink);
+      font: inherit;
+      font-size: 1.08rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: background-color 0.15s, transform 0.1s;
+    }
+
+    .submit:hover {
+      background: var(--accent-hover);
+    }
+
+    .submit:active {
+      transform: translateY(1px);
+    }
+
+    .submit:focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    .submit:disabled {
+      cursor: progress;
+      opacity: 0.75;
+    }
+
+    .fineprint {
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 0.85rem;
+      text-align: center;
+    }
+
+    .result {
+      padding: 12px 0 4px;
+      text-align: center;
+    }
+
+    .result:focus {
+      outline: none;
+    }
+
+    .result-icon {
+      display: inline-grid;
+      place-items: center;
+      width: 64px;
+      height: 64px;
+      margin-bottom: 16px;
+      border-radius: 50%;
+      background: var(--taken);
+      color: var(--taken-ink);
+    }
+
+    .result-icon.ok {
+      background: var(--ok);
+      color: var(--ok-ink);
+    }
+
+    .result p {
+      margin: 8px auto 0;
+      max-width: 28em;
+    }
+
+    .result .muted {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .footer {
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      margin-top: 40px;
+      font-size: 0.85rem;
+    }
+
+    .footer a {
+      color: var(--muted);
+    }
+
+    @keyframes puls {
+      50% {
+        opacity: 0.35;
+      }
+    }
+
+    @keyframes wippen {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-4px);
+      }
+    }
+
+    @media (min-width: 520px) {
+      .fields {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .fields-schule {
+        grid-template-columns: 2fr 1fr;
+      }
+
+      .card {
+        padding: 30px 28px;
+      }
+    }
+
+    @media (min-width: 900px) {
+      .page {
+        padding: 28px 32px 56px;
+      }
+
+      .topbar {
+        margin-bottom: 56px;
+      }
+
+      .layout {
+        grid-template-columns: 1.05fr 1fr;
+        gap: 56px;
+        align-items: start;
+      }
+
+      .offer {
+        position: sticky;
+        top: 32px;
+      }
+
+      .card {
+        padding: 34px 32px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <span class="brand">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 17.5a3.5 3.5 0 1 1-2-3.16V4.6a1 1 0 0 1 .76-.97l10-2.5A1 1 0 0 1 19 2.1V15.5a3.5 3.5 0 1 1-2-3.16V6.03l-8 2v9.47Z"/></svg>
+        Kinderkonzert
+      </span>
+      <span>Cape 10</span>
+    </header>
+
+    <main class="layout">
+      <section class="offer" aria-labelledby="titel">
+        <p class="confirm">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+          Ihre Anmeldung ist eingegangen – danke!
+        </p>
+        <p class="eyebrow">Exklusiv für angemeldete Klassen</p>
+        <h1 id="titel">Bringen Sie eine <span class="mark">zweite Klasse</span> Ihrer Schule mit.</h1>
+        <p class="lead">
+          Sie können eine weitere Klasse Ihrer Schule zum Konzert mitnehmen. Diesen Zusatzplatz gibt es
+          aber <strong>nur für <span data-max>4</span> der 8 angemeldeten Klassen</strong> – vergeben wird
+          in der Reihenfolge der Anmeldung.
+        </p>
+
+        <div class="spots" aria-live="polite">
+          <div class="spots-head">
+            <p class="spots-count" id="spots-count"><strong>–</strong> von 4 Zusatzplätzen frei</p>
+            <span class="live" id="live" hidden><i></i>Live</span>
+          </div>
+          <ol class="tickets" id="tickets" aria-hidden="true"></ol>
+          <p class="spots-note" id="spots-note">Platzstand wird geladen …</p>
+        </div>
+      </section>
+
+      <section class="card" aria-label="Zusatzklasse anmelden">
+        <form id="formular">
+          <h2>Zusatzklasse anmelden</h2>
+          <p class="card-sub">Dauert nur eine Minute.</p>
+
+          <fieldset>
+            <legend><span class="step">1</span>Ihre angemeldete Klasse</legend>
+            <div class="fields fields-schule">
+              <label class="field">Schule
+                <input name="schule" required maxlength="200" autocomplete="organization" placeholder="z. B. VS Musterschule">
+              </label>
+              <label class="field">Ihre Klasse
+                <input name="eigene_klasse" required maxlength="60" autocomplete="off" placeholder="z. B. 2a">
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend><span class="step">2</span>Diese Klasse kommt mit</legend>
+            <div class="fields">
+              <label class="field">Klasse
+                <input name="zusatzklasse" required maxlength="60" autocomplete="off" placeholder="z. B. 3b">
+              </label>
+              <label class="field"><span>Name der Klasse<span class="optional">(optional)</span></span>
+                <input name="klassenname" maxlength="60" autocomplete="off" placeholder="z. B. Sonnenklasse">
+              </label>
+              <label class="field">Lehrer:in
+                <input name="lehrkraft" required maxlength="120" autocomplete="off" placeholder="z. B. Maria Huber">
+              </label>
+              <label class="field"><span>Anzahl Kinder<span class="optional">(optional)</span></span>
+                <input name="anzahl_kinder" type="number" min="1" max="99" inputmode="numeric" placeholder="z. B. 22">
+              </label>
+            </div>
+          </fieldset>
+
+          <div class="falle" aria-hidden="true">
+            <label>Website <input name="website" tabindex="-1" autocomplete="off"></label>
+          </div>
+
+          <p class="form-error" id="fehler" role="alert" hidden></p>
+
+          <button class="submit" type="submit" id="absenden">
+            <span id="absenden-text">Zusatzplatz sichern</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+          <p class="fineprint">Der Platz ist mit dem Absenden sofort für Ihre Schule reserviert.</p>
+        </form>
+
+        <div class="result" id="erfolg" tabindex="-1" hidden>
+          <div class="result-icon ok">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+          </div>
+          <h2>Platz gesichert!</h2>
+          <p><strong id="erfolg-klasse"></strong> mit <strong id="erfolg-lehrkraft"></strong> ist beim Kinderkonzert dabei.</p>
+          <p class="muted">Die Anmeldung ist eingegangen. Sie können dieses Fenster jetzt schließen.</p>
+        </div>
+
+        <div class="result" id="voll" tabindex="-1" hidden>
+          <div class="result-icon">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9a2 2 0 0 0 0 6v3a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-3a2 2 0 0 0 0-6V6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v3Z"/><path d="M9 9l6 6M15 9l-6 6"/></svg>
+          </div>
+          <h2>Alle Zusatzplätze sind vergeben</h2>
+          <p id="voll-text">Die <span data-max>4</span> Zusatzplätze sind bereits weg.</p>
+          <p class="muted">Ihre eigene Klasse ist davon nicht betroffen – ihre Anmeldung bleibt bestehen.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <a href="impressum.html">Impressum</a>
+      <a href="datenschutz.html">Datenschutz</a>
+    </footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = 'https://nmluynlddqiqgqeqeunv.supabase.co';
+    const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_CVi_eUiaXzJj6ySOdsfrvw_zhec5h1k';
+    const SPEICHER_KEY = 'zusatzklasse-anmeldung';
+    const AKTUALISIEREN_MS = 15000;
+
+    const supabaseClient = window.supabase
+      ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+          auth: { persistSession: false, autoRefreshToken: false }
+        })
+      : null;
+
+    const el = (id) => document.getElementById(id);
+    const formular = el('formular');
+
+    let stand = { max: 4, frei: null };
+    let standFehler = false;
+    let phase = 'offen';
+    let meinPlatz = null;
+
+    function setzeText(knoten, html) {
+      if (knoten.innerHTML !== html) knoten.innerHTML = html;
+    }
+
+    function renderTickets() {
+      const { max, frei } = stand;
+      const liste = el('tickets');
+      if (liste.children.length !== max) {
+        liste.replaceChildren(...Array.from({ length: max }, (_, i) => {
+          const ticket = document.createElement('li');
+          ticket.className = 'ticket';
+          ticket.innerHTML = `<span class="ticket-top"><span class="ticket-label">Platz</span><span class="ticket-nr">${i + 1}</span></span><span class="ticket-status"></span>`;
+          return ticket;
+        }));
+      }
+
+      const vergeben = frei === null ? 0 : max - frei;
+      [...liste.children].forEach((ticket, i) => {
+        const nr = i + 1;
+        const istMeiner = nr === meinPlatz;
+        const istVergeben = nr <= vergeben && !istMeiner;
+        ticket.classList.toggle('meiner', istMeiner);
+        ticket.classList.toggle('vergeben', istVergeben);
+        ticket.classList.toggle('laedt', frei === null && !istMeiner);
+        ticket.classList.toggle('naechster', phase === 'offen' && frei !== null && nr === vergeben + 1);
+        ticket.querySelector('.ticket-status').textContent =
+          istMeiner ? 'Ihr Platz' : istVergeben ? 'vergeben' : frei === null ? '…' : 'frei';
+      });
+    }
+
+    function renderStand() {
+      const { max, frei } = stand;
+      document.querySelectorAll('[data-max]').forEach((knoten) => { knoten.textContent = max; });
+
+      setzeText(el('spots-count'),
+        frei === null ? `<strong>–</strong> von ${max} Zusatzplätzen frei`
+        : frei === 0 ? `Alle ${max} Zusatzplätze vergeben`
+        : `${frei < max ? 'Nur noch' : 'Noch'} <strong>${frei}</strong> von ${max} Zusatzplätzen frei`);
+
+      const vergeben = max - frei;
+      setzeText(el('spots-note'),
+        frei === null ? (standFehler ? 'Der aktuelle Stand kann gerade nicht geladen werden.' : 'Platzstand wird geladen …')
+        : phase === 'erfolg' && meinPlatz ? `Platz ${meinPlatz} ist für Ihre Schule reserviert.`
+        : frei === 0 ? 'Die Zusatzplätze sind ausgeschöpft.'
+        : frei === 1 ? 'Der letzte Platz geht an die nächste Anmeldung.'
+        : vergeben === 0 ? 'Noch ist kein Platz vergeben – sichern Sie sich den ersten.'
+        : `${vergeben === 1 ? 'Ein Platz ist' : `${vergeben} Plätze sind`} schon weg – wer zuerst anmeldet, ist dabei.`);
+
+      el('live').hidden = frei === null || standFehler;
+      renderTickets();
+    }
+
+    function zeigePhase(neuePhase, fokus) {
+      phase = neuePhase;
+      formular.hidden = phase !== 'offen';
+      el('erfolg').hidden = phase !== 'erfolg';
+      el('voll').hidden = phase !== 'voll';
+      if (fokus && phase !== 'offen') el(phase).focus();
+    }
+
+    function uebernehmeStand(daten) {
+      const max = Number(daten && daten.max);
+      const frei = Number(daten && daten.frei);
+      if (!Number.isInteger(max) || !Number.isInteger(frei)) return;
+      stand = { max, frei };
+      standFehler = false;
+      if (phase === 'offen' && frei === 0) zeigePhase('voll');
+      if (phase === 'voll' && frei > 0) zeigePhase('offen');
+      renderStand();
+    }
+
+    async function ladeStand() {
+      try {
+        const { data, error } = await supabaseClient.rpc('zusatzklassen_status');
+        if (error) throw error;
+        uebernehmeStand(data);
+      } catch (_) {
+        standFehler = true;
+        renderStand();
+      }
+    }
+
+    function zeigeErfolg({ klasse, klassenname, lehrkraft }) {
+      el('erfolg-klasse').textContent = `Die Klasse ${klasse}${klassenname ? ` „${klassenname}“` : ''}`;
+      el('erfolg-lehrkraft').textContent = lehrkraft;
+    }
+
+    function zeigeFehler(text) {
+      el('fehler').textContent = text || '';
+      el('fehler').hidden = !text;
+    }
+
+    formular.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const eingabe = Object.fromEntries(new FormData(formular));
+      const anmeldung = {
+        klasse: eingabe.zusatzklasse.trim(),
+        klassenname: eingabe.klassenname.trim(),
+        lehrkraft: eingabe.lehrkraft.trim()
+      };
+
+      if (eingabe.website) {
+        zeigeErfolg(anmeldung);
+        zeigePhase('erfolg', true);
+        return;
+      }
+
+      zeigeFehler(null);
+      if (!supabaseClient) {
+        zeigeFehler('Die Anmeldung kann gerade nicht gesendet werden. Bitte laden Sie die Seite neu und versuchen Sie es erneut.');
+        return;
+      }
+
+      el('absenden').disabled = true;
+      el('absenden-text').textContent = 'Wird gesendet …';
+      try {
+        const { data, error } = await supabaseClient.rpc('zusatzklasse_anmelden', {
+          p_schule: eingabe.schule,
+          p_eigene_klasse: eingabe.eigene_klasse,
+          p_zusatzklasse: eingabe.zusatzklasse,
+          p_lehrkraft: eingabe.lehrkraft,
+          p_klassenname: eingabe.klassenname || null,
+          p_anzahl_kinder: eingabe.anzahl_kinder ? Number(eingabe.anzahl_kinder) : null
+        });
+        if (error) throw error;
+
+        if (data.ok) {
+          meinPlatz = data.max - data.frei;
+          try {
+            localStorage.setItem(SPEICHER_KEY, JSON.stringify({ ...anmeldung, platz: meinPlatz }));
+          } catch (_) {}
+          zeigeErfolg(anmeldung);
+          zeigePhase('erfolg', true);
+          uebernehmeStand(data);
+        } else if (data.fehler === 'ausgebucht') {
+          el('voll-text').textContent = 'Leider war gerade eine andere Klasse schneller – alle Zusatzplätze sind jetzt vergeben.';
+          uebernehmeStand(data);
+          zeigePhase('voll', true);
+        } else if (data.fehler === 'doppelt') {
+          zeigeFehler(`Für die Klasse ${eingabe.eigene_klasse.trim()} dieser Schule ist schon eine Zusatzklasse angemeldet. Jede angemeldete Klasse kann eine Klasse mitnehmen.`);
+          uebernehmeStand(data);
+        } else {
+          zeigeFehler('Bitte füllen Sie alle Pflichtfelder vollständig aus.');
+        }
+      } catch (_) {
+        zeigeFehler('Die Anmeldung konnte nicht gesendet werden. Bitte prüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.');
+      } finally {
+        el('absenden').disabled = false;
+        el('absenden-text').textContent = 'Zusatzplatz sichern';
+      }
+    });
+
+    try {
+      const gespeichert = JSON.parse(localStorage.getItem(SPEICHER_KEY));
+      if (gespeichert && gespeichert.klasse) {
+        meinPlatz = gespeichert.platz || null;
+        zeigeErfolg(gespeichert);
+        zeigePhase('erfolg');
+      }
+    } catch (_) {}
+
+    renderStand();
+    ladeStand();
+    setInterval(() => {
+      if (document.visibilityState === 'visible') ladeStand();
+    }, AKTUALISIEREN_MS);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') ladeStand();
+    });
+  </script>
+</body>
+</html>
